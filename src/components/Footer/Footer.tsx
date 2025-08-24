@@ -1,0 +1,68 @@
+import { TodoFilter } from '../../types/TodoFilter';
+import './Footer.scss';
+
+import cn from 'classnames';
+
+type Props = {
+  todoCount: number;
+  handleGroupBy: (typeGroupBy: TodoFilter) => void;
+  groupBy: TodoFilter;
+};
+
+export const Footer: React.FC<Props> = ({
+  todoCount,
+  handleGroupBy,
+  groupBy,
+}) => {
+  return (
+    <footer className="todoapp__footer" data-cy="Footer">
+      <span className="todo-count" data-cy="TodosCounter">
+        {`${todoCount} items left`}
+      </span>
+
+      {/* Active link should have the 'selected' class */}
+      <nav className="filter" data-cy="Filter">
+        <a
+          href="#/"
+          className={cn('filter__link', {
+            selected: groupBy === TodoFilter.All,
+          })}
+          data-cy="FilterLinkAll"
+          onClick={() => handleGroupBy(TodoFilter.All)}
+        >
+          All
+        </a>
+
+        <a
+          href="#/active"
+          className={cn('filter__link', {
+            selected: groupBy === TodoFilter.Active,
+          })}
+          data-cy="FilterLinkActive"
+          onClick={() => handleGroupBy(TodoFilter.Active)}
+        >
+          Active
+        </a>
+        <a
+          href="#/completed"
+          className={cn('filter__link', {
+            selected: groupBy === TodoFilter.Completed,
+          })}
+          data-cy="FilterLinkCompleted"
+          onClick={() => handleGroupBy(TodoFilter.Completed)}
+        >
+          Completed
+        </a>
+      </nav>
+
+      {/* this button should be disabled if there are no completed todos */}
+      <button
+        type="button"
+        className="todoapp__clear-completed"
+        data-cy="ClearCompletedButton"
+      >
+        Clear completed
+      </button>
+    </footer>
+  );
+};
