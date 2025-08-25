@@ -1,15 +1,16 @@
+import React from 'react';
 import { Todo } from '../../types/Todo';
 import { TodoItem } from '../TodoItem/TodoItem';
-import cn from 'classnames';
 
-export const TodoList = ({ todosDataFromServer, loadingStartWindow }) => {
+type Props = {
+  visibleData: Todo[];
+};
+
+export const TodoList: React.FC<Props> = ({ visibleData }) => {
   return (
-    <section
-      className={cn(`todoapp__main ${loadingStartWindow ? 'is-hidden' : ''}`)}
-      data-cy="TodoList"
-    >
+    <section className="todoapp__main" data-cy="TodoList">
       {/* This is a completed todo */}
-      {todosDataFromServer.map((todo: Todo) => {
+      {visibleData.map((todo: Todo) => {
         return <TodoItem key={todo.id} todo={todo} />;
       })}
       {/* This todo is an active todo */}

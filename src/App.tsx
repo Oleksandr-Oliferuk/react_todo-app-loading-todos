@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
 /* eslint-disable jsx-a11y/control-has-associated-label */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { UserWarning } from './UserWarning';
 import { getTodos, USER_ID } from './api/todos';
 import { Todo } from './types/Todo';
@@ -31,7 +31,7 @@ function preperedData(dataTodos: Todo[], groupBy: string): Todo[] {
 export const App: React.FC = () => {
   const [todosDataFromServer, setodosDataFromServer] = useState<Todo[]>([]);
   const [errorMessage, setErrorMessage] = useState<string>('');
-  const [loadingStartWindow, setLoadingStartWindow] = useState(false); // use with footer and list when starting window
+  const [loadingStartWindow, setLoadingStartWindow] = useState<boolean>(false); // use with footer and list when starting window
   const [groupBy, setGroupBy] = useState<TodoFilter>(TodoFilter.All);
 
   const visibleData = preperedData(todosDataFromServer, groupBy);
@@ -69,6 +69,10 @@ export const App: React.FC = () => {
     setGroupBy(typeGroupBy);
   };
 
+  const completedCount = useMemo(() => {
+    return todosDataFromServer.filter(todo => !todo.completed).length;
+  }, [todosDataFromServer]);
+
   //isShowElement analyze that we not loadWindow and count arr of todos > 0;
   const isShowElement = !loadingStartWindow && todosDataFromServer.length > 0;
 
@@ -101,17 +105,12 @@ export const App: React.FC = () => {
             />
           </form>
         </header>
-        {isShowElement && (
-          <TodoList
-            todosDataFromServer={visibleData}
-            loadingStartWindow={loadingStartWindow}
-          />
-        )}
+        {isShowElement && <TodoList visibleData={visibleData} />}
         {/* Hide the footer if there are no todos */}
 
         {isShowElement && (
           <Footer
-            todoCount={visibleData.length}
+            completedCount={completedCount}
             handleGroupBy={handleGroupBy}
             groupBy={groupBy}
           />
@@ -123,7 +122,8 @@ export const App: React.FC = () => {
       <div
         data-cy="ErrorNotification"
         className={cn(
-          `notification is-danger is-light has-text-weight-normal ${errorMessage.length > 0 ? '' : 'hidden'}`,
+          'notification is-danger is-light has-text-weight-normal',
+          { hidden: errorMessage.length === 0 },
         )}
       >
         <button

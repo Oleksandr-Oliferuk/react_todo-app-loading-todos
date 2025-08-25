@@ -4,20 +4,20 @@ import './Footer.scss';
 import cn from 'classnames';
 
 type Props = {
-  todoCount: number;
+  completedCount: number;
   handleGroupBy: (typeGroupBy: TodoFilter) => void;
   groupBy: TodoFilter;
 };
 
 export const Footer: React.FC<Props> = ({
-  todoCount,
+  completedCount,
   handleGroupBy,
   groupBy,
 }) => {
   return (
     <footer className="todoapp__footer" data-cy="Footer">
       <span className="todo-count" data-cy="TodosCounter">
-        {`${todoCount} items left`}
+        {`${completedCount} items left`}
       </span>
 
       {/* Active link should have the 'selected' class */}
