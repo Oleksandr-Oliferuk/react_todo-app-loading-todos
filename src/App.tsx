@@ -31,28 +31,26 @@ function preperedData(dataTodos: Todo[], groupBy: string): Todo[] {
 export const App: React.FC = () => {
   const [todosDataFromServer, setodosDataFromServer] = useState<Todo[]>([]);
   const [errorMessage, setErrorMessage] = useState<string>('');
-  const [loadingStartWindow, setLoadingStartWindow] = useState<boolean>(false); // use with footer and list when starting window
+  const [loadingStartWindow, setLoadingStartWindow] = useState<boolean>(false);
   const [groupBy, setGroupBy] = useState<TodoFilter>(TodoFilter.All);
 
   const visibleData = preperedData(todosDataFromServer, groupBy);
 
-  useEffect(() => {
+  const loadTodos = () => {
     setErrorMessage('');
     setLoadingStartWindow(true);
     getTodos()
       .then((todosFromServer: Todo[]) => {
         setodosDataFromServer(todosFromServer);
-        // console.log(todosFromServer);
       })
       .catch(() => setErrorMessage('Unable to load todos'))
       .finally(() => setLoadingStartWindow(false));
-  }, []);
+  };
 
-  // analyze state error and autoclose after  appearance for 3s
-  useEffect(() => {
+  const errorTimeOut = (errorNotification: string) => {
     let timerId: NodeJS.Timeout | number | undefined;
 
-    if (errorMessage) {
+    if (errorNotification) {
       timerId = setTimeout(() => {
         setErrorMessage('');
       }, 3000);
@@ -63,7 +61,7 @@ export const App: React.FC = () => {
         clearTimeout(timerId);
       }
     };
-  }, [errorMessage]);
+  };
 
   const handleGroupBy = (typeGroupBy: TodoFilter) => {
     setGroupBy(typeGroupBy);
@@ -73,8 +71,15 @@ export const App: React.FC = () => {
     return todosDataFromServer.filter(todo => !todo.completed).length;
   }, [todosDataFromServer]);
 
-  //isShowElement analyze that we not loadWindow and count arr of todos > 0;
   const isShowElement = !loadingStartWindow && todosDataFromServer.length > 0;
+
+  useEffect(() => {
+    loadTodos();
+  }, []);
+
+  useEffect(() => {
+    errorTimeOut(errorMessage);
+  }, [errorMessage]);
 
   if (!USER_ID) {
     return <UserWarning />;
@@ -111,7 +116,7 @@ export const App: React.FC = () => {
         {isShowElement && (
           <Footer
             completedCount={completedCount}
-            handleGroupBy={handleGroupBy}
+            onHandleGroupBy={handleGroupBy}
             groupBy={groupBy}
           />
         )}
@@ -123,7 +128,7 @@ export const App: React.FC = () => {
         data-cy="ErrorNotification"
         className={cn(
           'notification is-danger is-light has-text-weight-normal',
-          { hidden: errorMessage.length === 0 },
+          { hidden: !errorMessage.length },
         )}
       >
         <button

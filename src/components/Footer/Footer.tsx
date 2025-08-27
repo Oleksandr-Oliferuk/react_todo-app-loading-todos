@@ -5,19 +5,19 @@ import cn from 'classnames';
 
 type Props = {
   completedCount: number;
-  handleGroupBy: (typeGroupBy: TodoFilter) => void;
+  onHandleGroupBy: (typeGroupBy: TodoFilter) => void;
   groupBy: TodoFilter;
 };
 
 export const Footer: React.FC<Props> = ({
   completedCount,
-  handleGroupBy,
+  onHandleGroupBy,
   groupBy,
 }) => {
   return (
     <footer className="todoapp__footer" data-cy="Footer">
       <span className="todo-count" data-cy="TodosCounter">
-        {`${completedCount} items left`}
+        {completedCount} items left
       </span>
 
       {/* Active link should have the 'selected' class */}
@@ -28,7 +28,7 @@ export const Footer: React.FC<Props> = ({
             selected: groupBy === TodoFilter.All,
           })}
           data-cy="FilterLinkAll"
-          onClick={() => handleGroupBy(TodoFilter.All)}
+          onClick={() => onHandleGroupBy(TodoFilter.All)}
         >
           All
         </a>
@@ -39,7 +39,7 @@ export const Footer: React.FC<Props> = ({
             selected: groupBy === TodoFilter.Active,
           })}
           data-cy="FilterLinkActive"
-          onClick={() => handleGroupBy(TodoFilter.Active)}
+          onClick={() => onHandleGroupBy(TodoFilter.Active)}
         >
           Active
         </a>
@@ -49,7 +49,7 @@ export const Footer: React.FC<Props> = ({
             selected: groupBy === TodoFilter.Completed,
           })}
           data-cy="FilterLinkCompleted"
-          onClick={() => handleGroupBy(TodoFilter.Completed)}
+          onClick={() => onHandleGroupBy(TodoFilter.Completed)}
         >
           Completed
         </a>
